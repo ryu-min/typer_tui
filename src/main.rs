@@ -12,10 +12,10 @@ fn main() -> io::Result<()> {
     let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
 
     let mut should_quit = false;
-    let mut input_text = String::new(); // добавляем поле для хранения текста
+    let mut input_text = String::new(); 
     while !should_quit {
-        terminal.draw(|frame| ui(frame, &input_text))?; // передаем поле с текстом в функцию ui
-        should_quit = handle_events(&mut input_text)?; // передаем поле с текстом в функцию handle_events
+        terminal.draw(|frame| ui(frame, &input_text))?; 
+        should_quit = handle_events(&mut input_text)?; 
     }
 
     disable_raw_mode()?;
@@ -27,15 +27,14 @@ fn handle_events(input_text: &mut String) -> io::Result<bool> {
     if event::poll(std::time::Duration::from_millis(50))? {
         if let Event::Key(key) = event::read()? {
             if key.kind == event::KeyEventKind::Press && key.code == KeyCode::Char('q') {
-                return Ok(true);
+                return Ok(true)
             } else if key.kind == event::KeyEventKind::Release {
                 match key.code {
                     KeyCode::Char(c) => {
-                        if c == '\u{1B}' { 
-                            input_text.clear(); 
-                        } else {
-                            input_text.push(c);
-                        }
+                        input_text.push(c);
+                    }
+                    KeyCode::Backspace => {
+                        input_text.pop();
                     }
                     _ => {
                         return Ok(false);
